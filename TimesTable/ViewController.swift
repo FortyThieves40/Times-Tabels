@@ -13,16 +13,22 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var currentSliderValue = 1
     
     // DANA: Bool states for action buttons
-    var addSelected = false
+    var addSelected = false  //starts program out with adding displayed
     var subSelected = false
-    var multSelected = true
+    var multSelected = false
     var divSelected = false
-
+    
+    //DANA: Class Var to change buttons back from red to blue when not selected
+    var currentSelectedButton: UIBarButtonItem?
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        addButton(addOutlet)
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -34,7 +40,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
     }
     
-
+    
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "numCell")
@@ -54,7 +60,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         cell.textLabel!.text = numSentence
         return cell
     }
-
+    
     
     @IBAction func sliderChange(_ sender: AnyObject){
         
@@ -65,7 +71,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             tableData.reloadData()
             let randomColor = getRandomColor()
             displayLabel.textColor = randomColor
-        
+            
             if addSelected == true, subSelected == false, multSelected == false, divSelected == false { //add it
                 displayLabel.text! = "\(localSliderValue)s Addition Tabels to 50!"
             }
@@ -102,7 +108,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             let remainder: Int = (indexPath.row + 1) % currentSliderValue
             if remainder != 0 {
                 localNumExpression = "\(indexPath.row + 1) ÷ \(currentSliderValue) = \(((indexPath.row + 1) / currentSliderValue)) with Remainder: \(remainder)"
-            //print("inside selectDiv")
+                //print("inside selectDiv")
             }
             else{
                 localNumExpression = "\(indexPath.row + 1) ÷ \(currentSliderValue) = \(((indexPath.row + 1) / currentSliderValue))"
@@ -117,48 +123,73 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         UIView.animate(withDuration: 1.25, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [.curveEaseIn], animations: {
             
-                cell?.textLabel?.frame = frame
-                cell?.textLabel?.textColor = self.getRandomColor()
+            cell?.textLabel?.frame = frame
+            cell?.textLabel?.textColor = self.getRandomColor()
             }, completion: nil)
         
     }
     @IBAction func addButton(_ sender: AnyObject) {
-        let bar = sender as? UIToolbar
-        let button = sender as? UIBarButtonItem
-        bar?.barTintColor = UIColor.blue
-        button!.tintColor = UIColor.red
-        addSelected = true
-        subSelected = false
-        multSelected = false
-        divSelected = false
-        displayLabel.text! = "\(currentSliderValue)s Addition Tabels to 50!"
-        tableData.reloadData()
+        
+        let button1 = sender as? UIBarButtonItem
+        print(sender)
+        if (currentSelectedButton != nil) {
+            currentSelectedButton!.tintColor = UIColor.blue
+            button1!.tintColor = UIColor.red
+            addSelected = true
+            subSelected = false
+            multSelected = false
+            divSelected = false
+            displayLabel.text! = "\(currentSliderValue)s Addition Tabels to 50!"
+            tableData.reloadData()
+            currentSelectedButton = button1
+        }
+        else
+        {
+            currentSelectedButton = button1
+            button1!.tintColor = UIColor.red
+            addSelected = true
+            subSelected = false
+            multSelected = false
+            divSelected = false
+            displayLabel.text! = "\(currentSliderValue)s Addition Tabels to 50!"
+            tableData.reloadData()
+        }
     }
     @IBAction func subButton(_ sender: AnyObject) {
-        let button = sender as? UIBarButtonItem
-        button!.tintColor = UIColor.red
+        let button2 = sender as? UIBarButtonItem
+        currentSelectedButton!.tintColor = UIColor.blue
+        button2!.tintColor = UIColor.red
         addSelected = false
         subSelected = true
         multSelected = false
         divSelected = false
         displayLabel.text! = "\(currentSliderValue)s Subtraction Tabels to 50!"
         tableData.reloadData()
+        currentSelectedButton = button2
     }
     @IBAction func multButton(_ sender: AnyObject) {
+        let button3 = sender as? UIBarButtonItem
+        currentSelectedButton!.tintColor = UIColor.blue
+        button3!.tintColor = UIColor.red
         addSelected = false
         subSelected = false
         multSelected = true
         divSelected = false
         displayLabel.text! = "\(currentSliderValue)s Multiplication Tabels to 50!"
         tableData.reloadData()
+        currentSelectedButton = button3
     }
     @IBAction func divButton(_ sender: AnyObject) {
+        let button4 = sender as? UIBarButtonItem
+        currentSelectedButton!.tintColor = UIColor.blue
+        button4!.tintColor = UIColor.red
         addSelected = false
         subSelected = false
         multSelected = false
         divSelected = true
         displayLabel.text! = "\(currentSliderValue)s Division Tabels to 50!"
         tableData.reloadData()
+        currentSelectedButton = button4
     }
     
     func getRandomColor() -> UIColor{
@@ -171,13 +202,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         return UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
     }
-
+    
     @IBOutlet weak var tableData: UITableView!
     
     @IBOutlet weak var slider: UISlider!
-
+    
     @IBOutlet weak var displayLabel: UILabel!
     
-    @IBOutlet weak var addOutlet: UIBarButtonItem!
+    @IBOutlet weak var addOutlet: UIBarButtonItem! //used to have addButton call self in viewDidLoad()
 }
 
